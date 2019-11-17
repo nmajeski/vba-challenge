@@ -1,1 +1,1 @@
-This is the readme for VBA-Scripting-Homework
+This is the README for VBA-Scripting-Homework.
