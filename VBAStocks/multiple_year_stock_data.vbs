@@ -1,10 +1,17 @@
-Sub MultipleYearStockData():
+Sub AlphabeticalTesting():
     For Each ws In Worksheets
         ' Set up headers
         ws.Cells(1, 9).Value = "Ticker"
         ws.Cells(1, 10).Value = "Yearly Change"
         ws.Cells(1, 11).Value = "Percent Change"
         ws.Cells(1, 12).Value = "Total Stock Volume"
+        ws.Cells(1, 16).Value = "Ticker"
+        ws.Cells(1, 17).Value = "Value"
+        
+        ' Set up row headers for challenge problem
+        ws.Cells(2, 15).Value = "Greatest % Increase"
+        ws.Cells(3, 15).Value = "Greatest % Decrease"
+        ws.Cells(4, 15).Value = "Greatest Total Volume"
 
         LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
         
@@ -20,6 +27,17 @@ Sub MultipleYearStockData():
         ' Initialize variable for the total volume of each ticker
         Dim CurrentTotalVolume As LongLong
         CurrentTotalVolume = 0
+
+        Dim GreatestPercentIncreaseTicker As String
+        Dim GreatestPercentDecreaseTicker As String
+        Dim GreatestTotalVolumeTicker As String
+
+        Dim GreatestPercentIncreaseVal As Double
+        GreatestPercentIncreaseVal = 0#
+        Dim GreatestPercentDecreaseVal As Double
+        GreatestPercentDecreaseVal = 0#
+        Dim GreatestTotalVolumeVal As LongLong
+        GreatestTotalVolumeVal = 0
         
         For i = 3 To LastRow
             ' Initialize previous and current row numbers
@@ -56,9 +74,22 @@ Sub MultipleYearStockData():
                     PercentChange = YearlyChange / OpeningPrice
                     ws.Cells(CurrentResultRow, 11).Value = PercentChange
                     ws.Cells(CurrentResultRow, 11).Style = "Percent"
+
+                    If PercentChange > 0 And PercentChange > GreatestPercentIncreaseVal Then
+                        GreatestPercentIncreaseTicker = ws.Cells(CurrentRow, 1).Value
+                        GreatestPercentIncreaseVal = PercentChange
+                    ElseIf PercentChange < 0 And PercentChange < GreatestPercentDecreaseVal Then
+                        GreatestPercentDecreaseTicker = ws.Cells(CurrentRow, 1).Value
+                        GreatestPercentDecreaseVal = PercentChange
+                    End If
                 End If
 
                 OpeningPrice = ws.Cells(CurrentRow, 3)
+
+                If CurrentTotalVolume > GreatestTotalVolumeVal Then
+                    GreatestTotalVolumeTicker = ws.Cells(CurrentRow, 1).Value
+                    GreatestTotalVolumeVal = CurrentTotalVolume
+                End If
 
                 ' Set the total volume cell for the previous ticker
                 ws.Cells(CurrentResultRow, 12).Value = CurrentTotalVolume
@@ -90,15 +121,37 @@ Sub MultipleYearStockData():
                         PercentChange = YearlyChange / OpeningPrice
                         ws.Cells(CurrentResultRow, 11).Value = PercentChange
                         ws.Cells(CurrentResultRow, 11).Style = "Percent"
+
+                        If PercentChange > 0 And PercentChange > GreatestPercentIncreaseVal Then
+                            GreatestPercentIncreaseTicker = ws.Cells(CurrentRow, 1).Value
+                            GreatestPercentIncreaseVal = PercentChange
+                        ElseIf PercentChange < 0 And PercentChange < GreatestPercentDecreaseVal Then
+                            GreatestPercentDecreaseTicker = ws.Cells(CurrentRow, 1).Value
+                            GreatestPercentDecreaseVal = PercentChange
+                        End If
                     End If
 
                     ws.Cells(CurrentResultRow, 12).Value = CurrentTotalVolume
+                    If CurrentTotalVolume > GreatestTotalVolumeVal Then
+                        GreatestTotalVolumeTicker = ws.Cells(CurrentRow, 1).Value
+                        GreatestTotalVolumeVal = CurrentTotalVolume
+                    End If
                 End If
             End If
             
         Next i
 
-        ws.Columns("A:L").AutoFit
+        ws.Cells(2, 16).Value = GreatestPercentIncreaseTicker
+        ws.Cells(2, 17).Value = GreatestPercentIncreaseVal
+        ws.Cells(2, 17).Style = "Percent"
+        ws.Cells(3, 16).Value = GreatestPercentDecreaseTicker
+        ws.Cells(3, 17).Value = GreatestPercentDecreaseVal
+        ws.Cells(3, 17).Style = "Percent"
+        ws.Cells(4, 16).Value = GreatestTotalVolumeTicker
+        ws.Cells(4, 17).Value = GreatestTotalVolumeVal
+        ws.Columns("A:Q").AutoFit
     Next
 End Sub
+
+
 
